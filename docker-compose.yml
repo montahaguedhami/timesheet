@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  mysqldb:
+    image: mysql:8.0
+    container_name: mysql_timesheet
+    environment:
+      MYSQL_ROOT_PASSWORD: mypassword
+      MYSQL_DATABASE: timesheet
+    ports:
+      - "3307:3306"
+    volumes:
+      - timesheetvol:/var/lib/mysql
+    networks:
+      - timesheet-network
+    restart: unless-stopped
+
+  timesheet:
+    build: .
+    image: timesheet-montaha-4twin4
+    container_name: timesheet_app
+    ports:
+      - "8081:8080"  # Changé de 8080:8080 à 8081:8080
+    depends_on:
+      - mysqldb
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/timesheet?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: mypassword
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - timesheet-network
+    restart: unless-stopped
+
+volumes:
+  timesheetvol:
+    name: timesheetvol
+
+networks:
+  timesheet-network:
+    driver: bridge
