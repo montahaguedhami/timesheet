@@ -13,13 +13,16 @@ public class UserController {
     @GetMapping
     public List<User> getAllUsers() {
         return Arrays.asList(
-            new User(1L, "John", "Doe", "john@example.com"),
-            new User(2L, "Jane", "Smith", "jane@example.com")
+            new User("John", "Doe", "john@example.com"),    // 3 paramètres
+            new User("Jane", "Smith", "jane@example.com")   // 3 paramètres
         );
     }
     
     @GetMapping("/{id}")
     public User getUser(@PathVariable Long id) {
-        return new User(id, "Test", "User", "test@example.com");
+        // Créer un user puis setter l'ID
+        User user = new User("Test", "User", "test@example.com");
+        user.setId(id);
+        return user;
     }
 }
